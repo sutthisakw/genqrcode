@@ -14,20 +14,27 @@
   <p>ใส่รหัสหลัง <code>#</code> เช่น <code>/#form</code></p>
 
   <script>
-  // ตาราง mapping จะถูก "ฉีด" โดย Python
-  const MAPPING = {"2dV7jXGf": "https://script.google.com/macros/s/AKfycbx1GH7iQre2l3Tamo_OxHloScJDBWgmbD0fLzjsTpuyzjE98qNM0bvQ2316GlIv-Cci/exec", "504WANvm": "https://script.google.com/macros/s/AKfycbwCh5GyBCR8YkryJq9B4aYqG3I9MhsHEPlvrDT0rqoCEgC-YP5Ci9GQL0vN_ELJGUg-yg/exec"};
-
-  (function () {
-    const code = decodeURIComponent(location.hash.replace(/^#/, ''));
-    if (!code) return; // ไม่มีโค้ด → แสดงหน้าเฉยๆ
-    const target = MAPPING[code];
-    if (target) {
-      location.replace(target); // redirect โดยไม่ทิ้ง history ซ้ำ
-    } else {
-      document.body.insertAdjacentHTML('beforeend',
-        `<p style="color:#c00">ไม่พบรหัส: <b>${code}</b></p>`);
-    }
-  })();
+    (async () => {
+      const code = decodeURIComponent(location.hash.replace(/^#/, ''));
+      if (!code) return; // ไม่มีโค้ด → แสดงหน้าเฉยๆ
+    
+      try {
+        // กัน cache ด้วย time param
+        const res = await fetch('mapping.json?v=' + Date.now());
+        const mapping = await res.json();
+    
+        const target = mapping[code];
+        if (target) {
+          location.replace(target);
+        } else {
+          document.body.insertAdjacentHTML('beforeend',
+            `<p style="color:#c00">ไม่พบรหัส: <b>${code}</b></p>`);
+        }
+      } catch (e) {
+        document.body.insertAdjacentHTML('beforeend',
+          `<p style="color:#c00">โหลด mapping.json ไม่ได้: ${e}</p>`);
+      }
+    })();
   </script>
 </body>
 </html>
