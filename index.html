@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <title>Short → Redirect</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:2rem;}
+    code{background:#f3f3f3;padding:.2rem .4rem;border-radius:.3rem}
+  </style>
+</head>
+<body>
+  <h3>Local Short Redirect</h3>
+  <p>ใส่รหัสหลัง <code>#</code> เช่น <code>index.html#ex</code></p>
+
+  <script>
+  // ====== ตาราง mapping จะแทรกโดยสคริปต์ Python ======
+  const MAPPING = {/*__INJECT_MAPPING__*/};
+
+  (function () {
+    const code = decodeURIComponent(location.hash.replace(/^#/, ''));
+    if (!code) return; // ถ้าไม่มีโค้ด ให้คงหน้าไว้
+    const target = MAPPING[code];
+    if (target) {
+      // ใช้ location.replace เพื่อนไม่สร้าง history ซ้ำ
+      location.replace(target);
+    } else {
+      document.body.insertAdjacentHTML('beforeend',
+        `<p style="color:#c00">ไม่พบรหัส: <b>${code}</b></p>`);
+    }
+  })();
+  </script>
+</body>
+</html>
